@@ -52,11 +52,3 @@
 </body>
 
 </html>
-<script>
-    (function() {
-        var csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfMeta || !csrfMeta.content) {
-            location.reload();
-        }
-    })();
-</script>
