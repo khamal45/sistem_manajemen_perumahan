@@ -1,26 +1,26 @@
-## Login
+## 🚪 Login
 
-Gunakan kredensial berikut untuk masuk ke aplikasi:
+Masuk ke aplikasi dengan kredensial berikut:
 
 - **Email:** `admin@gmail.com`
 - **Password:** `root`
 
 ---
 
-## Spesifikasi Versi
+## 🛠️ Spesifikasi Versi
 
 - **PHP:** `8.4.8`
 - **Node.js:** `v23.10.0`
 
 ---
 
-## Prasyarat
+## 📋 Prasyarat
 
 Pastikan Anda telah menginstal:
 
-- **Database** (misal: MySQL melalui XAMPP)
+- **Database** (misal: MySQL via XAMPP)
 - **Composer**
-- **VSCode** (opsional, namun direkomendasikan)
+- **VSCode** (opsional, tapi direkomendasikan)
 
 Aktifkan ekstensi PHP berikut:
 
@@ -34,7 +34,7 @@ Aktifkan ekstensi PHP berikut:
 
 ---
 
-## Langkah Instalasi
+## 🚀 Langkah Instalasi
 
 1. **Clone repository** ke folder pilihan Anda:
 
@@ -42,11 +42,15 @@ Aktifkan ekstensi PHP berikut:
     git clone https://github.com/khamal45/sistem_manajemen_perumahan
     ```
 
-2. **Buka project** di Visual Studio Code.
+2. **Masuk ke direktori project:**
+
+    ```bash
+    cd sistem_manajemen_perumahan
+    ```
 
 3. **Aktifkan database** (misal melalui XAMPP).
 
-4. **Ubah nama file** `.env.example` menjadi `.env`:
+4. **Salin file konfigurasi:**
 
     ```bash
     mv .env.example .env
@@ -64,7 +68,7 @@ Aktifkan ekstensi PHP berikut:
     npm install
     ```
 
-7. **Jalankan migrasi database:**
+7. **Migrasi & seed database:**
 
     ```bash
     php artisan migrate --seed
