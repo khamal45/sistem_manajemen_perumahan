@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fixed_expenses', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->decimal('amount', 12, 2);
-            $table->date('tanggal_berlaku');
-            $table->string('username');
-            $table->timestamps();
+        Schema::table('fee_types', function (Blueprint $table) {
+            $table->date('tanggal_berakhir')->nullable()->after('tanggal_berlaku');
         });
     }
 
     /**
      * Reverse the migrations.
      */
+    public function down(): void
+    {
+        Schema::table('fee_types', function (Blueprint $table) {
+            //
+        });
+    }
 };
