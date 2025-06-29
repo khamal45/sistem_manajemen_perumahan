@@ -10,7 +10,7 @@ class Payment extends Model
 
     public function houseResident()
     {
-        return $this->belongsTo(HouseResidents::class);
+        return $this->belongsTo(HouseResidents::class, 'house_residents_id');
     }
 
     public function feeType()

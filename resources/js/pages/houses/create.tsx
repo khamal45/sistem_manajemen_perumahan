@@ -1,3 +1,4 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { Link, router } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
@@ -19,7 +20,7 @@ const Create = () => {
     };
 
     return (
-        <div className="p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Tambah Rumah</h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -46,7 +47,7 @@ const Create = () => {
                     </Link>
                 </div>
             </form>
-        </div>
+        </MenuLayout>
     );
 };
 

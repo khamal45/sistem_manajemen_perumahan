@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class FeeType extends Model
 {
-    protected $fillable = ['nama', 'nominal', 'tanggal_berlaku'];
+    protected $fillable = ['nama', 'nominal', 'tanggal_berlaku', 'tanggal_berakhir'];
+
 
     public function payments()
     {

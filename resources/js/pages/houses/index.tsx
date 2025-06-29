@@ -1,10 +1,11 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { House_Model_Props } from '@/model/house_model';
 import { alertSuccess, confirmDelete } from '@/utils/swal';
 import { Link } from '@inertiajs/react';
 
 const Index = ({ houses }: House_Model_Props) => {
     return (
-        <div className="p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Daftar Rumah</h1>
 
             <Link href="/houses/create" className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
@@ -65,7 +66,7 @@ const Index = ({ houses }: House_Model_Props) => {
                     ))}
                 </tbody>
             </table>
-        </div>
+        </MenuLayout>
     );
 };
 

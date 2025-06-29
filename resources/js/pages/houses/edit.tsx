@@ -1,3 +1,4 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { House_Model } from '@/model/house_model';
 import { alertSuccess } from '@/utils/swal';
 import { Link, router } from '@inertiajs/react';
@@ -24,7 +25,7 @@ const Edit = ({ house }: { house: House_Model }) => {
     };
 
     return (
-        <div className="p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Edit Rumah</h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -51,7 +52,7 @@ const Edit = ({ house }: { house: House_Model }) => {
                     </Link>
                 </div>
             </form>
-        </div>
+        </MenuLayout>
     );
 };
 

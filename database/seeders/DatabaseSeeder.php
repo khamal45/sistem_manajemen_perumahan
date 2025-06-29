@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FeeExpense;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,17 +16,25 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('root'),
         ]);
+
 
         $this->call([
             HouseSeeder::class,
             FeeTypeSeeder::class,
             PaymentSeeder::class,
+
+            FeeExpenseSeeder::class,
             ExpenditureSeeder::class,
-            FixedExpendseSeeder::class,
         ]);
     }
 }
