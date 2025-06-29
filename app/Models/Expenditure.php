@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expenditure extends Model
 {
+    protected $fillable = ['tanggal', 'fee_expense_id'];
 
-    protected $fillable = ['tanggal', 'amount', 'description', 'username'];
+    public function feeExpense()
+    {
+        return $this->belongsTo(feeExpense::class);
+    }
 }
