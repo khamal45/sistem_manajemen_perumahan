@@ -43,6 +43,7 @@ const HouseManagement = ({ houses }: House_Model_Props) => {
                                     <ul className="max-h-40 list-disc overflow-auto pl-5 text-gray-700">
                                         {activeResidents.map((res) => {
                                             const hasUnpaid = isUnpaidThisOrPreviousMonth(res);
+                                            console.log(activeResidents);
                                             return (
                                                 <Fragment key={res.id}>
                                                     <li>{res.nama_keluarga}</li>
@@ -69,7 +70,7 @@ const HouseManagement = ({ houses }: House_Model_Props) => {
                                         {lastTanggalKeluar ? ` sejak ${formatDate(lastTanggalKeluar)}` : ''}
                                     </p>
                                 )}
-                                <Link href={'/houses/' + house.id + '/residents'}>
+                                <Link href={'/house-resident/' + house.id + '/residents'}>
                                     <button className="absolute bottom-0 left-0 w-full bg-purple-500 p-1 font-bold text-white">
                                         Kelola Penghuni
                                     </button>
