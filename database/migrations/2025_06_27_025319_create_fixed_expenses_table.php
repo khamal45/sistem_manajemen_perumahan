@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('amount', 12, 2);
+            $table->date('tanggal_berlaku');
+            $table->string('username');
             $table->timestamps();
         });
     }

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal');
             $table->decimal('amount', 12, 2);
-            $table->string('description')->nullable();
+            $table->string('description');
+            $table->string('username');
             $table->timestamps();
         });
     }
