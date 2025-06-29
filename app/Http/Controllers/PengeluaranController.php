@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expenditure;
+use App\Models\FeeExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -32,14 +33,30 @@ class PengeluaranController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        Expenditure::create($validator->validated());
+        $validated = $validator->validated();
+
+        // Cari atau buat fee_expense berdasarkan nama (description)
+        $feeExpense = FeeExpense::firstOrCreate(
+            ['name' => $validated['description']],
+            [
+                'amount' => $validated['amount'],
+                'tanggal_berlaku' => null, // karena pengeluaran manual
+                'username' => $validated['username'] ?? null,
+            ]
+        );
+
+        // Simpan ke expenditures
+        Expenditure::create([
+            'tanggal' => $validated['tanggal'],
+            'fee_expense_id' => $feeExpense->id,
+        ]);
 
         return redirect()->route('pengeluaran.index')->with('success', 'Pengeluaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $pengeluaran = Expenditure::findOrFail($id);
+        $pengeluaran = Expenditure::with('feeExpense')->findOrFail($id);
 
         return Inertia::render('keuangan/pengeluaran-edit', [
             'pengeluaran' => $pengeluaran,
@@ -49,10 +66,8 @@ class PengeluaranController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal'     => 'required|date',
-            'amount'      => 'required|numeric|min:0',
-            'description' => 'required|string|max:255',
-            'username'    => 'nullable|string|max:100',
+            'tanggal'        => 'required|date',
+            'fee_expense_id' => 'required|exists:fee_expenses,id',
         ]);
 
         if ($validator->fails()) {

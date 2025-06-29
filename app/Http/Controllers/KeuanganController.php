@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Expenditure;
 use App\Models\Payment;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class KeuanganController extends Controller
@@ -21,7 +22,9 @@ class KeuanganController extends Controller
             ->orderBy('bulan')
             ->pluck('total', 'bulan');
 
-        $pengeluaran = Expenditure::selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(amount) as total")
+        $pengeluaran = DB::table('expenditures')
+            ->join('fee_expenses', 'expenditures.fee_expense_id', '=', 'fee_expenses.id')
+            ->selectRaw("DATE_FORMAT(expenditures.tanggal, '%Y-%m') as bulan, SUM(fee_expenses.amount) as total")
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->pluck('total', 'bulan');
@@ -48,7 +51,6 @@ class KeuanganController extends Controller
         ]);
     }
 
-
     public function payments()
     {
         $payments = Payment::join('fee_types', 'payments.fee_type_id', '=', 'fee_types.id')
@@ -61,21 +63,28 @@ class KeuanganController extends Controller
                 'fee_types.nama as fee_type_name',
                 'house_residents.nama_keluarga'
             )
-
             ->orderByDesc('payments.created_at')
-            ->limit(100)
+            ->limit(20)
             ->get();
 
         return response()->json($payments);
     }
 
-
-
     public function expenditures()
     {
-        return Expenditure::select('id', 'tanggal', 'amount', 'description', 'username')
+        return Expenditure::with('feeExpense:id,name,amount,username')
+            ->select('id', 'tanggal', 'fee_expense_id')
             ->orderByDesc('created_at')
-            ->limit(100)
-            ->get();
+            ->limit(20)
+            ->get()
+            ->map(function ($e) {
+                return [
+                    'id' => $e->id,
+                    'tanggal' => $e->tanggal,
+                    'amount' => $e->feeExpense->amount ?? 0,
+                    'description' => $e->feeExpense->name ?? '-',
+                    'username' => $e->feeExpense->username ?? '-',
+                ];
+            });
     }
 }

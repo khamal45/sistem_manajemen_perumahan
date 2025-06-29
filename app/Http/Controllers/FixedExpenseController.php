@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Carbon;
-use App\Models\{FixedExpense, Expenditure};
+use App\Models\{Expenditure, FeeExpense};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +13,7 @@ class FixedExpenseController extends Controller
 {
     public function index()
     {
-        $expenses = FixedExpense::latest()->get();
+        $expenses = FeeExpense::whereNotNull('tanggal_berlaku')->latest()->get();
         return Inertia::render('fixed-expense/index', [
             'expenses' => $expenses,
         ]);
@@ -29,7 +29,7 @@ class FixedExpenseController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'tanggal_berlaku' => 'required|date',
+            'tanggal_berlaku' => 'nullable|date',
             'username' => 'nullable|string|max:100',
         ]);
 
@@ -37,14 +37,14 @@ class FixedExpenseController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        FixedExpense::create($validator->validated());
+        FeeExpense::create($validator->validated());
 
-        return redirect()->route('fixed-expense.index')->with('success', 'Pengeluaran tetap berhasil ditambahkan.');
+        return redirect()->route('fixed-expense.index')->with('success', 'Pengeluaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $expense = FixedExpense::findOrFail($id);
+        $expense = FeeExpense::findOrFail($id);
         return Inertia::render('fixed-expense/edit', [
             'expense' => $expense,
         ]);
@@ -55,7 +55,7 @@ class FixedExpenseController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'tanggal_berlaku' => 'required|date',
+            'tanggal_berlaku' => 'nullable|date',
             'username' => 'nullable|string|max:100',
         ]);
 
@@ -63,58 +63,96 @@ class FixedExpenseController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $expense = FixedExpense::findOrFail($id);
+        $expense = FeeExpense::findOrFail($id);
         $expense->update($validator->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Pengeluaran tetap berhasil diperbarui.',
+            'message' => 'Pengeluaran berhasil diperbarui.',
             'data' => $expense,
         ]);
     }
 
-
     public function destroy($id)
     {
-        $expense = FixedExpense::findOrFail($id);
-        $expense->delete();
+        $expense = FeeExpense::findOrFail($id);
+        $expense->tanggal_berlaku = null;
+        $expense->save();
 
-        return redirect()->route('fixed-expense.index')->with('success', 'Pengeluaran tetap berhasil dihapus.');
+        return redirect()->route('fixed-expense.index')->with('success', 'Pengeluaran berhasil di-nonaktifkan.');
     }
 
     public function getUnpaidUI()
     {
-        return Inertia::render('fixed-expense/unpaid');
+        $now = Carbon::now()->startOfMonth();
+        $result = [];
+
+        $fixedExpenses = FeeExpense::whereNotNull('tanggal_berlaku')->get();
+
+        foreach ($fixedExpenses as $fixed) {
+            $start = Carbon::parse($fixed->tanggal_berlaku)->startOfMonth();
+            $monthsPassed = $start->diffInMonths($now) + 1;
+
+            $existingMonths = Expenditure::where('fee_expense_id', $fixed->id)
+                ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan")
+                ->pluck('bulan')
+                ->toArray();
+
+            $unpaidMonths = [];
+            $cursor = $start->copy();
+
+            while ($cursor <= $now) {
+                $bulan = $cursor->format('Y-m');
+                if (!in_array($bulan, $existingMonths)) {
+                    $unpaidMonths[] = $bulan;
+                }
+                $cursor->addMonth();
+            }
+
+            if (count($unpaidMonths) > 0) {
+                $result[] = [
+                    'id' => $fixed->id,
+                    'name' => $fixed->name,
+                    'amount' => $fixed->amount,
+                    'username' => $fixed->username,
+                    'unpaid_months' => $unpaidMonths,
+                ];
+            }
+        }
+
+        return Inertia::render('fixed-expense/unpaid', [
+            'unpaid' => $result
+        ]);
     }
+
 
     public function getUnpaidFixedExpenses()
     {
         $now = Carbon::now()->startOfMonth();
         $result = [];
-        $fixedExpenses = FixedExpense::all();
+
+        $fixedExpenses = FeeExpense::whereNotNull('tanggal_berlaku')->get();
 
         foreach ($fixedExpenses as $fixed) {
             $start = Carbon::parse($fixed->tanggal_berlaku)->startOfMonth();
             $monthsPassed = $start->diffInMonths($now) + 1;
-            $countPaid = Expenditure::where('description', $fixed->name)->count();
-            $unpaidCount = $monthsPassed - $countPaid;
 
-            if ($unpaidCount > 0) {
-                $unpaidMonths = [];
-                $cursor = $start->copy();
-                while (count($unpaidMonths) < $unpaidCount) {
-                    $alreadyPaid = Expenditure::where('description', $fixed->name)
-                        ->whereMonth('tanggal', $cursor->month)
-                        ->whereYear('tanggal', $cursor->year)
-                        ->exists();
+            $paidMonths = Expenditure::where('fee_expense_id', $fixed->id)
+                ->get()
+                ->map(fn($exp) => Carbon::parse($exp->tanggal)->format('Y-m'));
 
-                    if (! $alreadyPaid) {
-                        $unpaidMonths[] = $cursor->format('Y-m');
-                    }
+            $unpaidMonths = [];
+            $cursor = $start->copy();
 
-                    $cursor->addMonth();
+            while (count($unpaidMonths) < $monthsPassed) {
+                $key = $cursor->format('Y-m');
+                if (! $paidMonths->contains($key)) {
+                    $unpaidMonths[] = $key;
                 }
+                $cursor->addMonth();
+            }
 
+            if (count($unpaidMonths)) {
                 $result[] = [
                     'id' => $fixed->id,
                     'name' => $fixed->name,
@@ -133,9 +171,7 @@ class FixedExpenseController extends Controller
         $validator = Validator::make($request->all(), [
             'data' => 'required|array|min:1',
             'data.*.tanggal' => 'required|date',
-            'data.*.amount' => 'required|numeric|min:0',
-            'data.*.description' => 'required|string|max:255',
-            'data.*.username' => 'nullable|string|max:100',
+            'data.*.fee_expense_id' => 'required|exists:fee_expenses,id',
         ]);
 
         if ($validator->fails()) {
@@ -144,11 +180,16 @@ class FixedExpenseController extends Controller
 
         try {
             DB::beginTransaction();
-            foreach ($validator->validated()['data'] as $entry) {
-                Expenditure::create($entry);
+
+            foreach ($request->data as $item) {
+                Expenditure::create([
+                    'tanggal' => $item['tanggal'],
+                    'fee_expense_id' => $item['fee_expense_id'],
+                ]);
             }
+
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Semua pengeluaran berhasil disimpan.']);
+            return response()->json(['success' => true, 'message' => 'Pengeluaran berhasil disimpan.']);
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['error' => 'Gagal menyimpan pengeluaran.', 'debug' => $e->getMessage()], 500);
