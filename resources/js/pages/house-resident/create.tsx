@@ -1,3 +1,4 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { FormEvent, useState } from 'react';
 
 interface PageProps {
@@ -32,8 +33,7 @@ const Create = ({ house_id }: PageProps) => {
             });
 
             if (response.ok) {
-                console.log(response.json());
-                // window.location.href = `/houses/${house_id}/residents`;
+                window.location.href = `/house-resident/${house_id}/residents`;
             } else {
                 alert('Gagal menyimpan data');
             }
@@ -43,7 +43,7 @@ const Create = ({ house_id }: PageProps) => {
     };
 
     return (
-        <div className="mx-auto max-w-xl p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Tambah Penghuni Rumah</h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,7 +88,7 @@ const Create = ({ house_id }: PageProps) => {
                     </button>
                 </div>
             </form>
-        </div>
+        </MenuLayout>
     );
 };
 

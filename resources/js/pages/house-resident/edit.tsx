@@ -1,3 +1,4 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { FormEvent, useState } from 'react';
 
 interface HouseResident {
@@ -40,7 +41,7 @@ const Edit = ({ house_resident }: PageProps) => {
             });
 
             if (response.ok) {
-                window.location.href = `/houses/${house_resident.house_id}/residents`;
+                window.location.href = `/house-resident/${house_resident.house_id}/residents`;
             } else {
                 alert('Gagal memperbarui data');
             }
@@ -50,7 +51,7 @@ const Edit = ({ house_resident }: PageProps) => {
     };
 
     return (
-        <div className="mx-auto max-w-xl p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Edit Penghuni Rumah</h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,7 +98,7 @@ const Edit = ({ house_resident }: PageProps) => {
                     </button>
                 </div>
             </form>
-        </div>
+        </MenuLayout>
     );
 };
 
