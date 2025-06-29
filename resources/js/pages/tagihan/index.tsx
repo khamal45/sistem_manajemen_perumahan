@@ -1,3 +1,4 @@
+import MenuLayout from '@/layouts/custom/menu-layout';
 import { FuturePaymentModel, TagihanModel, UnpaidFeeModel } from '@/model/fee_model';
 import { alertSuccess } from '@/utils/swal';
 import { useEffect, useMemo, useState } from 'react';
@@ -51,6 +52,7 @@ const generateFutureFees = (
 };
 
 const Tagihan = ({ house_resident, unpaid_fees, future_payment_options }: TagihanModel) => {
+    console.log(future_payment_options);
     const [bayarBulanDepan, setBayarBulanDepan] = useState<{
         [fee_type_id: number]: { from: string; to: string };
     }>({});
@@ -92,13 +94,11 @@ const Tagihan = ({ house_resident, unpaid_fees, future_payment_options }: Tagiha
     };
 
     const handleSubmit = () => {
-        const payload = combinedFees
-            .map((fee) => ({
-                fee_type_id: future_payment_options.find((f) => f.fee_type_name === fee.fee_type)?.fee_type_id,
-                periode_bulan: fee.periode_bulan,
-                nominal: fee.nominal,
-            }))
-            .filter((fee) => fee.fee_type_id); // filter kalau tidak ketemu
+        const payload = combinedFees.map((fee) => ({
+            fee_type_id: fee.fee_type_id,
+            periode_bulan: fee.periode_bulan,
+            nominal: fee.nominal,
+        }));
 
         fetch(`/tagihan/${house_resident.id}/bayar`, {
             method: 'POST',
@@ -119,7 +119,7 @@ const Tagihan = ({ house_resident, unpaid_fees, future_payment_options }: Tagiha
     };
 
     return (
-        <div className="p-6">
+        <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Tagihan Rumah {house_resident.nama_keluarga}</h1>
 
             <div className="mb-6 text-sm text-gray-600">
@@ -191,7 +191,7 @@ const Tagihan = ({ house_resident, unpaid_fees, future_payment_options }: Tagiha
                     Bayar Sekarang
                 </button>
             </div>
-        </div>
+        </MenuLayout>
     );
 };
 
