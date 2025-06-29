@@ -113,6 +113,7 @@ const Tagihan = ({ house_resident, unpaid_fees, future_payment_options }: Tagiha
                     alertSuccess('pembayaran berhasil').then(() => window.location.reload());
                 } else {
                     alert('Gagal menyimpan pembayaran');
+                    window.location.reload();
                 }
             })
             .catch(() => alert('Terjadi kesalahan jaringan'));
