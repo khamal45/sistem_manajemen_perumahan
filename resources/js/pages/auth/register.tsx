@@ -27,6 +27,11 @@ export default function Register({ id }: { id: string }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('register'), {
+            preserveScroll: true,
+            replace: true,
+            onSuccess: () => {
+                window.location.reload();
+            },
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
