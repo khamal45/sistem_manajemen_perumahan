@@ -1,5 +1,4 @@
 import MenuLayout from '@/layouts/custom/menu-layout';
-import { useEffect, useState } from 'react';
 
 interface UnpaidFixedExpense {
     id: number;
@@ -9,23 +8,21 @@ interface UnpaidFixedExpense {
     unpaid_months: [string];
 }
 
-const PengeluaranTetapUnpaidPage = () => {
-    const [unpaid, setUnpaid] = useState<UnpaidFixedExpense[]>([]);
-
-    useEffect(() => {
-        fetch('/pengeluaran-tetap/unpaid')
-            .then((res) => res.json())
-            .then(setUnpaid)
-            .catch(() => alert('Gagal memuat data pengeluaran tetap belum dibayar'));
-    }, []);
+const PengeluaranTetapUnpaidPage = ({ unpaid }: { unpaid: UnpaidFixedExpense[] }) => {
+    // const [unpaid, setUnpaid] = useState<UnpaidFixedExpense[]>([]);
+    console.log(unpaid);
+    // useEffect(() => {
+    //     fetch('/pengeluaran-tetap/unpaid')
+    //         .then((res) => res.json())
+    //         .then(setUnpaid)
+    //         .catch(() => alert('Gagal memuat data pengeluaran tetap belum dibayar'));
+    // }, []);
 
     const handleSubmit = async () => {
         const data = unpaid.flatMap((item) =>
             item.unpaid_months.map((bulan) => ({
                 tanggal: `${bulan}-01`,
-                amount: item.amount,
-                description: item.name,
-                username: item.username,
+                fee_expense_id: item.id,
             })),
         );
 
@@ -79,6 +76,14 @@ const PengeluaranTetapUnpaidPage = () => {
                                     <td className="border px-4 py-2">{'Rp.' + (item.amount * item.unpaid_months.length).toLocaleString('id-ID')}</td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td className="border px-4 py-2 text-right font-bold" colSpan={4}>
+                                    Total yang harus dibayarkan
+                                </td>
+                                <td className="border px-4 py-2 font-bold">
+                                    {`Rp.${unpaid.reduce((sum, item) => sum + item.amount * item.unpaid_months.length, 0).toLocaleString('id-ID')}`}
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 

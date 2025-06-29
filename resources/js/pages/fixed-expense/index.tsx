@@ -20,7 +20,7 @@ const FixedExpenseIndex = ({ expenses }: PageProps) => {
                 <h1 className="text-2xl font-bold">Daftar Pengeluaran Tetap</h1>
 
                 <div className="flex gap-3">
-                    <Link href="/fixed-expense/create" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    <Link href="/pengeluaran-tetap/unpaid-ui" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
                         Bayar Pengeluaran Tetap
                     </Link>
                     <Link href="/fixed-expense/create" className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700">
