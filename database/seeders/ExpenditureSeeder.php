@@ -18,6 +18,7 @@ class ExpenditureSeeder extends Seeder
                 'tanggal' => now()->subDays(rand(1, 60)),
                 'amount' => rand(50000, 500000),
                 'description' => 'Pengeluaran umum ke-' . $i,
+                'username' => 'Pak RT'
             ]);
         }
     }

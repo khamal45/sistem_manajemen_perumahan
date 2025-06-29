@@ -14,8 +14,8 @@ class FixedExpendseSeeder extends Seeder
     public function run(): void
     {
         FixedExpense::insert([
-            ['name' => 'Langganan Internet', 'amount' => 300000],
-            ['name' => 'Servis Kebersihan Bulanan', 'amount' => 50000],
+            ['name' => 'Langganan Internet', 'amount' => 300000, 'tanggal_berlaku' => '2025-06-01', 'username' => 'pos satpam'],
+            ['name' => 'Servis Kebersihan Bulanan', 'amount' => 50000, 'tanggal_berlaku' => '2025-06-01', 'username' => 'pak rt'],
         ]);
     }
 }
