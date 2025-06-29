@@ -86,8 +86,13 @@ Aktifkan ekstensi PHP berikut:
     ```
 
 9. **Jalankan website dalam mode development:**
+
     ```bash
     composer run dev
     ```
+
+10. **Buka aplikasi di browser:**
+
+    Kunjungi [http://localhost:8000](http://localhost:8000) untuk mulai menggunakan aplikasi.
 
 ---
