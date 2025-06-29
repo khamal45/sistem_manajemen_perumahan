@@ -52,9 +52,14 @@ Aktifkan ekstensi PHP berikut:
 
 4. **Salin file konfigurasi:**
 
-    ```bash
-    mv .env.example .env
-    ```
+    - **Windows:**
+        ```powershell
+        copy .env.example .env
+        ```
+    - **Linux/macOS:**
+        ```bash
+        mv .env.example .env
+        ```
 
 5. **Instal dependensi PHP:**
 
