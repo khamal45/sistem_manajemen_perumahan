@@ -1,94 +1,84 @@
-## 👤 User Akun
+## Login
 
-| Role                | Email                   | Password   |
-| ------------------- | ----------------------- | ---------- |
-| **Admin**           | `admin@example.com`     | `password` |
-| **Admin Tambang 1** | `tambang1@example.com`  | `password` |
-| **Admin Tambang 2** | `tambang2@example.com`  | `password` |
-| **Approver 1**      | `approver1@example.com` | `password` |
-| **Approver 2**      | `approver2@example.com` | `password` |
+Gunakan kredensial berikut untuk masuk ke aplikasi:
 
-> **Catatan:** Semua akun menggunakan password: `password`
+- **Email:** `admin@gmail.com`
+- **Password:** `root`
 
-## Video Panduan
+---
 
--   🎥 [Video Instalasi](https://youtu.be/VyTBrNnjTL0)
--   🌐 [Review Website](https://youtu.be/QhfyJIITSBQ)
+## Spesifikasi Versi
 
-# Instalasi & Setup Project Laravel
+- **PHP:** `8.4.8`
+- **Node.js:** `v23.10.0`
+
+---
 
 ## Prasyarat
 
-Pastikan Anda sudah menginstal:
+Pastikan Anda telah menginstal:
 
--   **PHP** versi `8.4.8`
--   **Node.js** versi `v23.10.0`
--   **Database** (contoh: MySQL via XAMPP)
--   **Composer**
--   **VSCode** (opsional, tapi direkomendasikan)
+- **Database** (misal: MySQL melalui XAMPP)
+- **Composer**
+- **VSCode** (opsional, namun direkomendasikan)
 
 Aktifkan ekstensi PHP berikut:
 
--   `curl`
--   `fileinfo`
--   `gd`
--   `mbstring`
--   `openssl`
--   `pdo_mysql`
--   `zip`
+- `curl`
+- `fileinfo`
+- `gd`
+- `mbstring`
+- `openssl`
+- `pdo_mysql`
+- `zip`
+
+---
 
 ## Langkah Instalasi
 
-1. Clone repository ini ke folder yang Anda inginkan:
+1. **Clone repository** ke folder pilihan Anda:
 
     ```bash
-    git clone https://github.com/khamal45/test-sekawan-media
+    git clone https://github.com/khamal45/sistem_manajemen_perumahan
     ```
 
-2. Buka project di Visual Studio Code.
+2. **Buka project** di Visual Studio Code.
 
-3. Aktifkan database Anda (misalnya melalui XAMPP).
+3. **Aktifkan database** (misal melalui XAMPP).
 
-4. Ubah nama file `.env.example` menjadi `.env`:
+4. **Ubah nama file** `.env.example` menjadi `.env`:
 
     ```bash
     mv .env.example .env
     ```
 
-5. Jalankan perintah berikut untuk menginstal dependensi PHP:
+5. **Instal dependensi PHP:**
 
     ```bash
     composer install
     ```
 
-6. Instal dependensi JavaScript:
+6. **Instal dependensi JavaScript:**
 
     ```bash
     npm install
     ```
 
-7. Jalankan migrasi database:
+7. **Jalankan migrasi database:**
 
     ```bash
-    php artisan migrate
+    php artisan migrate --seed
     ```
 
-8. Seed data awal:
-
-    ```bash
-    php artisan db:seed
-    ```
-
-9. Generate application key:
+8. **Generate application key:**
 
     ```bash
     php artisan key:generate
     ```
 
-10. Jalankan website dalam mode development:
-
-```bash
-composer run dev
-```
+9. **Jalankan website dalam mode development:**
+    ```bash
+    composer run dev
+    ```
 
 ---
