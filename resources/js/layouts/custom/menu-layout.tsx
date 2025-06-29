@@ -10,7 +10,13 @@ const menuItems = [
     { label: 'Pengeluaran', path: '/pengeluaran' },
     { label: 'Pengeluaran Bulanan ', path: '/fixed-expense' },
 ];
-
+if (typeof window !== 'undefined') {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    console.log(meta);
+    if (!meta || !meta.getAttribute('content')) {
+        window.location.reload();
+    }
+}
 const MenuLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <div className="flex min-h-screen flex-col">
