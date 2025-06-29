@@ -77,7 +77,7 @@ const SearchResident = () => {
                             </td>
                             <td className="border px-4 py-2">
                                 {res.foto_ktp ? (
-                                    <Link href={`/houses/${res.house_id}/residents`}>
+                                    <Link href={`/house-resident/${res.house_id}/residents`}>
                                         <button className="text-blue-500 hover:underline">Lihat Keluarga</button>
                                     </Link>
                                 ) : (
