@@ -60,7 +60,11 @@ class HouseController extends Controller
     public function management()
     {
         $houses = House::with('houseResidents.residents')->get();
-
+        foreach ($houses as $house) {
+            foreach ($house->houseResidents as $resident) {
+                $resident->unpaid_fees = TagihanController::getUnpaidFees($resident);
+            }
+        }
         return Inertia::render('house-management-menu', [
             'houses' => $houses,
         ]);

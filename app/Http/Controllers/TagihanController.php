@@ -13,24 +13,17 @@ use Inertia\Inertia;
 class TagihanController extends Controller
 {
 
-
-    public function index($house_resident_id)
+    public static function getUnpaidFees(HouseResidents $resident)
     {
-        $houseResident = HouseResidents::with('payments')->findOrFail($house_resident_id);
         $feeTypes = FeeType::all();
-
         $unpaid = [];
 
-        $paidKeys = $houseResident->payments->map(fn($p) => $p->fee_type_id . '_' . $p->periode_bulan);
-
+        $paidKeys = $resident->payments->map(fn($p) => $p->fee_type_id . '_' . $p->periode_bulan);
         $end = now()->startOfMonth();
 
         foreach ($feeTypes as $fee) {
-
-            $residentStart = Carbon::parse($houseResident->tanggal_masuk)->startOfMonth();
+            $residentStart = Carbon::parse($resident->tanggal_masuk)->startOfMonth();
             $feeStart = Carbon::parse($fee->tanggal_berlaku)->startOfMonth();
-
-
             $start = $residentStart->greaterThan($feeStart) ? $residentStart : $feeStart;
 
             $current = $start->copy();
@@ -47,6 +40,17 @@ class TagihanController extends Controller
                 $current->addMonth();
             }
         }
+
+        return $unpaid;
+    }
+
+    public function index($house_resident_id)
+    {
+        $houseResident = HouseResidents::with('payments')->findOrFail($house_resident_id);
+        $feeTypes = FeeType::all();
+
+        // Gunakan fungsi getUnpaidFees
+        $unpaid = self::getUnpaidFees($houseResident);
 
         // === OPSI PEMBAYARAN BULAN DEPAN ===
         $futureOptions = [];
@@ -86,8 +90,6 @@ class TagihanController extends Controller
         ]);
     }
 
-
-
     public function bayar(Request $request, $house_resident_id)
     {
         // Validasi format yang dikirim
@@ -126,11 +128,9 @@ class TagihanController extends Controller
 
             DB::commit();
 
-
             return response()->json(['success' => true, 'message' => 'Pembayaran berhasil ditambahkan.']);
         } catch (\Throwable $e) {
             DB::rollBack();
-
 
             return response()->json([
                 'error' => 'Gagal memproses pembayaran.',
