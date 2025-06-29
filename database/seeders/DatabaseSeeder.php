@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FeeExpense;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -24,8 +25,9 @@ class DatabaseSeeder extends Seeder
             HouseSeeder::class,
             FeeTypeSeeder::class,
             PaymentSeeder::class,
+
+            FeeExpenseSeeder::class,
             ExpenditureSeeder::class,
-            FixedExpendseSeeder::class,
         ]);
     }
 }
