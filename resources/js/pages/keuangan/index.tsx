@@ -36,6 +36,31 @@ const KeuanganIndex = () => {
     const [summary, setSummary] = useState<Summary | null>(null);
     const [payments, setPayments] = useState<Payment[]>([]);
     const [expenditures, setExpenditures] = useState<Expenditure[]>([]);
+    const [selectedMonth, setSelectedMonth] = useState<string>('');
+
+    const handleExport = () => {
+        const url = selectedMonth ? `/export-keuangan?bulan=${selectedMonth}` : `/export-keuangan`;
+        window.open(url, '_blank');
+    };
+
+    // Utility: Format 'YYYY-MM' menjadi 'Juni 2025'
+    const formatMonth = (ym: string) => {
+        const [year, month] = ym.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1);
+        return new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(date);
+    };
+
+    // Utility: Generate 12 bulan terakhir
+    const generateMonthOptions = () => {
+        const now = new Date();
+        const options: string[] = [];
+        for (let i = 0; i < 12; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i);
+            const ym = d.toISOString().slice(0, 7); // Format YYYY-MM
+            options.push(ym);
+        }
+        return options;
+    };
     console.log(chartData);
     useEffect(() => {
         fetch('/keuangan/chart')
@@ -57,6 +82,23 @@ const KeuanganIndex = () => {
     return (
         <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Grafik Keuangan Bulanan</h1>
+            <div className="mb-4 flex flex-col flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium">Pilih Bulan:</label>
+                    <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="rounded border px-2 py-1">
+                        <option value="">Semua Bulan</option>
+                        {generateMonthOptions().map((bulan) => (
+                            <option key={bulan} value={bulan}>
+                                {formatMonth(bulan)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <button onClick={handleExport} className="w-fit rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">
+                    Cetak Laporan
+                </button>
+            </div>
 
             {summary && (
                 <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">

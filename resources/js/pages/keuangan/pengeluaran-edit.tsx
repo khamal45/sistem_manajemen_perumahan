@@ -1,44 +1,60 @@
-// File: resources/js/Pages/Keuangan/PengeluaranEdit.tsx
-
 import MenuLayout from '@/layouts/custom/menu-layout';
 import { router } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 
-interface PengeluaranEditProps {
-    pengeluaran: {
-        id: number;
-        tanggal: string;
-        amount: number;
-        description: string;
-        username: string;
-    };
+interface FeeExpense {
+    id: number;
+    name: string;
+    amount: number;
+    username?: string;
 }
 
-const PengeluaranEdit = ({ pengeluaran }: PengeluaranEditProps) => {
+interface Pengeluaran {
+    id: number;
+    tanggal: string;
+    fee_expense_id: number;
+    fee_expense: FeeExpense;
+}
+
+interface PageProps {
+    pengeluaran: Pengeluaran;
+}
+
+const PengeluaranEdit = ({ pengeluaran }: PageProps) => {
     const [form, setForm] = useState({
         tanggal: pengeluaran.tanggal,
-        amount: pengeluaran.amount.toString(),
-        description: pengeluaran.description,
-        username: pengeluaran.username,
+        fee_expense_id: pengeluaran.fee_expense_id,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        router.post(`/pengeluaran/${pengeluaran.id}`, {
-            _method: 'PUT',
-            ...form,
+
+        const response = await fetch(`/pengeluaran/${pengeluaran.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+            },
+            body: JSON.stringify(form),
         });
+
+        if (response.ok) {
+            router.visit('/pengeluaran');
+        } else {
+            alert('Gagal memperbarui pengeluaran.');
+        }
     };
 
     return (
         <MenuLayout>
             <h1 className="mb-4 text-2xl font-bold">Edit Pengeluaran</h1>
-            <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+
+            <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
                 <div>
                     <label className="block font-medium">Tanggal</label>
                     <input
@@ -52,25 +68,22 @@ const PengeluaranEdit = ({ pengeluaran }: PengeluaranEditProps) => {
                 </div>
 
                 <div>
-                    <label className="block font-medium">Jumlah (Rp)</label>
+                    <label className="block font-medium">Jenis Pengeluaran</label>
                     <input
-                        type="number"
-                        name="amount"
-                        value={form.amount}
-                        onChange={handleChange}
-                        required
-                        className="w-full rounded border px-3 py-2"
+                        type="text"
+                        value={pengeluaran.fee_expense?.name ?? '-'}
+                        readOnly
+                        className="w-full rounded border bg-gray-100 px-3 py-2"
                     />
                 </div>
 
                 <div>
-                    <label className="block font-medium">Deskripsi</label>
-                    <textarea
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                        required
-                        className="w-full rounded border px-3 py-2"
+                    <label className="block font-medium">Jumlah</label>
+                    <input
+                        type="text"
+                        value={`Rp${pengeluaran.fee_expense?.amount?.toLocaleString('id-ID')}`}
+                        readOnly
+                        className="w-full rounded border bg-gray-100 px-3 py-2"
                     />
                 </div>
 
@@ -78,11 +91,9 @@ const PengeluaranEdit = ({ pengeluaran }: PengeluaranEditProps) => {
                     <label className="block font-medium">Pengguna</label>
                     <input
                         type="text"
-                        name="username"
-                        value={form.username}
-                        onChange={handleChange}
-                        required
-                        className="w-full rounded border px-3 py-2"
+                        value={pengeluaran.fee_expense?.username ?? '-'}
+                        readOnly
+                        className="w-full rounded border bg-gray-100 px-3 py-2"
                     />
                 </div>
 
